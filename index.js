@@ -113,6 +113,9 @@ module.exports = t = {
       if (vars.expires > Date.now()){
         t.auth.refresh();
       }
+    },
+    refresh : function(){
+      // do the refresh
     }
     
   }
