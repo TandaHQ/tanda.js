@@ -152,6 +152,8 @@ module.exports = t = {
           if (err) return reject(err);
           resolve(resp, body);
         });
+      }).catch(function(err){
+        reject(err);
       });
     });
   }
