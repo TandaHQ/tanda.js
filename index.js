@@ -1,4 +1,5 @@
-var request = require('request');
+var request = require('request'),
+  Promise = require('bluebird');
 
 var vars = {
   client_id : '',
@@ -109,15 +110,49 @@ module.exports = t = {
         next();
       });
     },
-    validateToken : function(){
-      if (vars.expires > Date.now()){
-        t.auth.refresh();
-      }
-    },
-    refresh : function(){
+    validate : function(){
       // do the refresh
+      return new Promise(function(resolve, reject){
+        if (vars.expires < Date.now()){
+          return resolve();
+        }
+        var data = {
+          client_id : vars.client_id,
+          client_secret : vars.client_secret,
+          code : t.auth.vars.code,
+          redirect_uri : 'http://localhost:3000/callback',
+          grant_type : 'authorization_code'
+        };
+        console.log(data);
+        request.post(vars.api_base + 'oauth/token', {form : data},function(err, resp){
+          if (err) return reject(err);
+          var body = JSON.parse(resp.body);
+          console.log(body);
+          vars.access_token = body.access_token;
+          vars.expires = body.created_at + body.expires_in;
+          vars.refresh_token = body.refresh_token;
+          resolve();
+        });
+      });
     }
     
-  }
+  },
 
+  request : function(method, endpoint, body){
+    return new Promise(function(resolve, reject){
+      if (!vars.expires){
+        throw new Error("Please run auth init/request/receive before making API calls");
+      }
+      t.auth.validate().then(function(){
+        request({
+          method: method.toUpperCase(),
+          uri : vars.api_base + endpoint,
+          form : body
+        }, function(err, resp, body){
+          if (err) return reject(err);
+          resolve(resp, body);
+        });
+      });
+    });
+  }
 };
