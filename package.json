@@ -1,0 +1,22 @@
+{
+  "name": "node-tanda",
+  "version": "0.0.1",
+  "description": "A Node.js wrapper for Tanda's v2 API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Not Implemented\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deecewan/node-tanda.git"
+  },
+  "keywords": [
+    "tanda"
+  ],
+  "author": "David Buchan-Swanson <david.buchanswanson@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/deecewan/node-tanda/issues"
+  },
+  "homepage": "https://github.com/deecewan/node-tanda#readme"
+}
