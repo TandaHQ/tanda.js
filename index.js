@@ -77,6 +77,7 @@ module.exports = t = {
       } else {
         scope = options.scopes.join(' ');
       }
+      t.auth.vars.redirect_uri = options.redirect;
       
       this.vars.redirect_url = base_url + 'scope=' + scope + '&client_id=' + vars.client_id
         + '&redirect_uri=' + options.redirect + '&response_type=code';
@@ -96,7 +97,7 @@ module.exports = t = {
         client_id : vars.client_id,
         client_secret : vars.client_secret,
         code : t.auth.vars.code,
-        redirect_uri : 'http://localhost:3000/callback',
+        redirect_uri : t.auth.vars.redirect_uri,
         grant_type : 'authorization_code'
       };
       console.log(data);
