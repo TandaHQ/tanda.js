@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/deecewan/node-tanda/issues"
   },
-  "homepage": "https://github.com/deecewan/node-tanda#readme"
+  "homepage": "https://github.com/deecewan/node-tanda#readme",
+  "dependencies": {
+    "query-string": "^4.1.0",
+    "request": "^2.72.0"
+  }
 }
