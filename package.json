@@ -1,5 +1,5 @@
 {
-  "name": "node-tanda",
+  "name": "tanda",
   "version": "0.0.1",
   "description": "A Node.js wrapper for Tanda's v2 API.",
   "main": "index.js",
