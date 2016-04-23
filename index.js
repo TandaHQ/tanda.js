@@ -394,7 +394,7 @@ var t = {
 
     update : function (schedule) {
       return new Promise(function(resolve, reject) {
-        t.request('PUT', t.schedules.vars.base + id, schedule)
+        t.request('PUT', t.schedules.vars.base + schedule.id, schedule.info)
           .then(function(resp, body) {
             return resolve(body);
           })
