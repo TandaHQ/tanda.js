@@ -21,7 +21,6 @@ var t = {
   auth: {
     vars: {},
     init: function (options) {
-      console.log(this);
       var base_url = vars.api_base + 'oauth/authorize?';
       options = options || null;
 
@@ -97,7 +96,6 @@ var t = {
         redirect_uri: t.auth.vars.redirect_uri,
         grant_type: 'authorization_code'
       };
-      console.log(data);
       request.post(vars.api_base + 'oauth/token', {form: data}, function (err, resp) {
         if (err) throw err;
         var body = JSON.parse(resp.body);
@@ -125,11 +123,9 @@ var t = {
           redirect_uri: t.auth.vars.redirect_uri,
           grant_type: 'authorization_code'
         };
-        console.log(data);
         request.post(vars.api_base + 'oauth/token', {form: data}, function (err, resp) {
           if (err) return reject(err);
           var body = JSON.parse(resp.body);
-          console.log(body);
           vars.access_token = body.access_token;
           vars.expires = body.created_at + body.expires_in;
           vars.refresh_token = body.refresh_token;
@@ -167,7 +163,8 @@ var t = {
           if (resp.headers['X-RateLimit-RatedLimited'] == 'true') {
             return reject('Rate Limited.');
           }
-          resolve(resp, JSON.parse(body));
+          vars.test = JSON.parse(body);
+          resolve({resp : resp, body : JSON.parse(body)});
         });
       }).catch(function (err) {
         reject(err);
@@ -182,15 +179,16 @@ var t = {
     get : function(){
       return new Promise(function(resolve, reject){
         t.request('GET', t.users.vars.base + '?show_wages=true')
-          .then(function(resp, body){
-            resolve(body);
+          .then(function(resp){
+            resolve(resp.body);
           })
       });
     },
     getUserById: function (id) {
       return new Promise(function (resolve, reject) {
         t.request('GET', t.users.vars.base + id + '?show_wages=true')
-          .then(function (res, body) {
+          .then(function (resp) {
+            var body = resp.body;
             var user = {
               id: body.id,
               name: body.name,
@@ -206,15 +204,15 @@ var t = {
     },
     getUserByPhoneNumber: function (number) {
       return new Promise(function(resolve, reject){
-        t.request('GET', t.users.base.vars + '?show_wages=true')
-          .then(function(resp, body){
-            body.forEach(function(user){
+        t.request('GET', t.users.vars.base + '?show_wages=true')
+          .then(function(response){
+            response.body.forEach(function(user){
               if (user.phone == number){
                 return resolve({
                   id : user.id,
                   name : user.name,
                   phone_number : user.phone,
-                  hourly : user.hourly
+                  hourly : user.hourly_rate
                 });
               }
               resolve({err : "User with that number was not found."});
@@ -236,7 +234,7 @@ var t = {
                   id : user.id,
                   name : user.name,
                   phone_number : user.phone,
-                  hourly : user.hourly
+                  hourly : user.hourly_rate
                 });
               } else {
                 var split = user.name.split(' ');
@@ -246,13 +244,18 @@ var t = {
                       id : user.id,
                       name : user.name,
                       phone_number : user.phone,
-                      hourly : user.hourly
+                      hourly : user.hourly_rate
                     });
                     break;
                   }
                 }
               }
             });
+            if (returnUsers.length == 1){
+              resolve(returnUsers[0]);
+            } else {
+              resolve(returnUsers);
+            }
           })
       });
     }
