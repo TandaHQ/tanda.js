@@ -163,8 +163,7 @@ var t = {
           if (resp.headers['X-RateLimit-RatedLimited'] == 'true') {
             return reject('Rate Limited.');
           }
-          vars.test = JSON.parse(body);
-          resolve({resp : resp, body : JSON.parse(body)});
+          resolve({"resp" : resp, body : JSON.parse(body)});
         });
       }).catch(function (err) {
         reject(err);
@@ -207,6 +206,7 @@ var t = {
         t.request('GET', t.users.vars.base + '?show_wages=true')
           .then(function(response){
             response.body.forEach(function(user){
+              console.log(user);
               if (user.phone == number){
                 return resolve({
                   id : user.id,
@@ -215,8 +215,8 @@ var t = {
                   hourly : user.hourly_rate
                 });
               }
-              resolve({err : "User with that number was not found."});
-            })
+            });
+            resolve({err : "User with that number was not found."});
           })
           .catch(function(err){
             reject(err);
@@ -262,8 +262,8 @@ var t = {
   },
 
   rosters : {
-    vars : {base : vars.api_base + 'v2/rosters/'},
-    on : function(date){
+    vars : {base : 'v2/rosters/'},
+    onDate : function(date){
       // returns the schedules for the date
       return new Promise(function(resolve, reject){
         t.request('GET', t.rosters.vars.base + "on/" + date)
@@ -271,6 +271,7 @@ var t = {
             if (resp.statusCode == 204){
               return resolve({err : "There is no roster for that date"});
             }
+            body = resp.body; //why?
             for(var i = 0; i < body.schedules.length; i++){
               var schedule = body.schedules[i];
               if (schedule.date == date){
@@ -311,7 +312,7 @@ var t = {
   },
 
   shifts : {
-    vars : {base : vars.api_base + 'v2/shifts/'},
+    vars : {base : 'v2/shifts/'},
     get : function (id) {
       return new Promise(function(resolve, reject) {
         t.request('GET', t.shifts.vars.base + id + '?show_costs=true')
@@ -378,7 +379,7 @@ var t = {
   },
 
   schedules : {
-    vars : {base : vars.api_base + 'v2/schedules'},
+    vars : {base : 'v2/schedules'},
     get : function(id) {
       return new Promise(function(resolve, reject) {
         t.request('GET', t.schedules.vars.base + id + '?show_costs=true')
