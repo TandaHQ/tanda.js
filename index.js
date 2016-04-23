@@ -82,16 +82,14 @@ module.exports = t = {
         + '&redirect_uri=' + options.redirect + '&response_type=code';
     },
     request: function (req, res, next) {
+
       res.redirect(t.auth.vars.redirect_url);
     },
     receive: function (req, res, next) {
-      console.log(t);
       t.auth.vars.code = req.query.code;
-      console.log(t.auth.vars);
-      console.log(t.auth);
-      t.auth.token(next);
+      t.auth.token(req, next);
     },
-    token: function (next) {
+    token: function (req, next) {
       var data = {
         client_id: vars.client_id,
         client_secret: vars.client_secret,
@@ -103,10 +101,14 @@ module.exports = t = {
       request.post(vars.api_base + 'oauth/token', {form: data}, function (err, resp) {
         if (err) throw err;
         var body = JSON.parse(resp.body);
-        console.log(body);
         vars.access_token = body.access_token;
         vars.expires = body.created_at + body.expires_in;
         vars.refresh_token = body.refresh_token;
+        req.client = {
+          access_token : vars.access_token,
+          expires : vars.expires,
+          refresh_token : vars.refresh_token
+        };
         next();
       });
     },
@@ -134,6 +136,12 @@ module.exports = t = {
           resolve();
         });
       });
+    },
+    serialize : function(fn){
+      t.vars.serialize = fn;
+    },
+    deserialize : function(fn){
+      t.vars.deserialize = fn;
     }
 
   },
@@ -272,7 +280,6 @@ module.exports = t = {
           })
       });
     },
-
     containing : function(date){
       return new Promise(function(resolve, reject){
         t.request('GET', t.rosters.vars.base + "on/" + date)
@@ -281,6 +288,17 @@ module.exports = t = {
               return resolve({err : "There is no roster for that date"});
             }
             return body;
+          })
+          .catch(function(err){
+            reject(err);
+          })
+      });
+    },
+    get : function(id){
+      return new Promise(function(resolve, reject){
+        t.request('GET', t.rosters.vars.base + '/' + id)
+          .then(function(resp, body){
+
           })
           .catch(function(err){
             reject(err);
