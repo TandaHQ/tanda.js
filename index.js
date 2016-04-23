@@ -2,26 +2,25 @@ var request = require('request'),
   Promise = require('bluebird');
 
 var vars = {
-  client_id : '',
-  client_secret : '',
-  api_base : 'https://my.tanda.co/api/'
+  client_id: '',
+  client_secret: '',
+  api_base: 'https://my.tanda.co/api/'
 };
 
 module.exports = t = {
-  
-  init : function(client_id, client_secret){
+
+  init: function (client_id, client_secret) {
     vars.client_id = client_id;
     vars.client_secret = client_secret;
   },
-  
-  checkVars : function(){
+
+  checkVars: function () {
     console.log(vars);
   },
 
-  auth : {
-    vars : {
-    },
-    init : function(options){
+  auth: {
+    vars: {},
+    init: function (options) {
       console.log(this);
       var base_url = vars.api_base + 'oauth/authorize?';
       options = options || null;
@@ -38,35 +37,35 @@ module.exports = t = {
        */
 
       // check options are present
-      if (options == null){
+      if (options == null) {
         throw new SyntaxError('Options must be set');
       }
 
-      if (!options.redirect){
+      if (!options.redirect) {
         throw new SyntaxError('Please provide a redirect');
       }
 
-      if (!options.scope && !options.scopes){
+      if (!options.scope && !options.scopes) {
         throw new SyntaxError('Please provide a scope or multiple scopes.');
       }
 
-      if (options.scope && options.scopes){
+      if (options.scope && options.scopes) {
         throw new SyntaxError('Cannot set both scope and scopes. One or the other.');
       }
 
       // check options are correct type
 
-      if (typeof options.redirect !== 'string'){
+      if (typeof options.redirect !== 'string') {
         throw new TypeError('Redirect URI must be a string');
       }
 
-      if (options.scope && typeof options.scope !== 'string'){
+      if (options.scope && typeof options.scope !== 'string') {
         throw new TypeError('Scope must be a string');
       }
 
-      if (options.scopes){
-        options.scopes.forEach(function(scope){
-          if (typeof scope !== 'string'){
+      if (options.scopes) {
+        options.scopes.forEach(function (scope) {
+          if (typeof scope !== 'string') {
             throw new TypeError('Scopes must all be strings.');
           }
         });
@@ -78,30 +77,30 @@ module.exports = t = {
         scope = options.scopes.join(' ');
       }
       t.auth.vars.redirect_uri = options.redirect;
-      
+
       this.vars.redirect_url = base_url + 'scope=' + scope + '&client_id=' + vars.client_id
         + '&redirect_uri=' + options.redirect + '&response_type=code';
     },
-    request : function(req, res, next){
+    request: function (req, res, next) {
       res.redirect(t.auth.vars.redirect_url);
     },
-    receive : function(req, res, next){
+    receive: function (req, res, next) {
       console.log(t);
       t.auth.vars.code = req.query.code;
       console.log(t.auth.vars);
       console.log(t.auth);
       t.auth.token(next);
     },
-    token : function(next){
+    token: function (next) {
       var data = {
-        client_id : vars.client_id,
-        client_secret : vars.client_secret,
-        code : t.auth.vars.code,
-        redirect_uri : t.auth.vars.redirect_uri,
-        grant_type : 'authorization_code'
+        client_id: vars.client_id,
+        client_secret: vars.client_secret,
+        code: t.auth.vars.code,
+        redirect_uri: t.auth.vars.redirect_uri,
+        grant_type: 'authorization_code'
       };
       console.log(data);
-      request.post(vars.api_base + 'oauth/token', {form : data},function(err, resp){
+      request.post(vars.api_base + 'oauth/token', {form: data}, function (err, resp) {
         if (err) throw err;
         var body = JSON.parse(resp.body);
         console.log(body);
@@ -111,21 +110,21 @@ module.exports = t = {
         next();
       });
     },
-    validate : function(){
+    validate: function () {
       // do the refresh
-      return new Promise(function(resolve, reject){
-        if (vars.expires < Date.now()){
+      return new Promise(function (resolve, reject) {
+        if (vars.expires < Date.now()) {
           return resolve();
         }
         var data = {
-          client_id : vars.client_id,
-          client_secret : vars.client_secret,
-          code : t.auth.vars.code,
-          redirect_uri : 'http://localhost:3000/callback',
-          grant_type : 'authorization_code'
+          client_id: vars.client_id,
+          client_secret: vars.client_secret,
+          code: t.auth.vars.code,
+          redirect_uri: t.auth.vars.redirect_uri,
+          grant_type: 'authorization_code'
         };
         console.log(data);
-        request.post(vars.api_base + 'oauth/token', {form : data},function(err, resp){
+        request.post(vars.api_base + 'oauth/token', {form: data}, function (err, resp) {
           if (err) return reject(err);
           var body = JSON.parse(resp.body);
           console.log(body);
@@ -136,26 +135,162 @@ module.exports = t = {
         });
       });
     }
-    
+
   },
 
-  request : function(method, endpoint, body){
-    return new Promise(function(resolve, reject){
-      if (!vars.expires){
+  request: function (method, endpoint, body) {
+    return new Promise(function (resolve, reject) {
+      if (!vars.expires) {
         throw new Error("Please run auth init/request/receive before making API calls");
       }
-      t.auth.validate().then(function(){
-        request({
+      t.auth.validate().then(function () {
+        var req = {
           method: method.toUpperCase(),
-          uri : vars.api_base + endpoint,
-          form : body
-        }, function(err, resp, body){
+          uri: vars.api_base + endpoint,
+          headers: {
+            "Authorization": "bearer " + vars.access_token
+          }
+        };
+        if (body) {
+          req.form = body;
+        }
+        request(req, function (err, resp, body) {
           if (err) return reject(err);
-          resolve(resp, body);
+          if (resp.headers['X-RateLimit-RatedLimited'] == 'true') {
+            return reject('Rate Limited.');
+          }
+          resolve(resp, JSON.parse(body));
         });
-      }).catch(function(err){
+      }).catch(function (err) {
         reject(err);
       });
     });
+  },
+
+  users: {
+    vars: {
+      base : 'v2/users/'
+    },
+    get : function(){
+      return new Promise(function(resolve, reject){
+        t.request('GET', t.users.vars.base + '?show_wages=true')
+          .then(function(resp, body){
+            resolve(body);
+          })
+      });
+    },
+    getUserById: function (id) {
+      return new Promise(function (resolve, reject) {
+        t.request('GET', t.users.vars.base + id + '?show_wages=true')
+          .then(function (res, body) {
+            var user = {
+              id: body.id,
+              name: body.name,
+              phone_number: body.phone,
+              hourly: body.hourly_rate
+            };
+            resolve(user);
+          })
+          .catch(function (err) {
+            reject(err);
+          })
+      });
+    },
+    getUserByPhoneNumber: function (number) {
+      return new Promise(function(resolve, reject){
+        t.request('GET', t.users.base.vars + '?show_wages=true')
+          .then(function(resp, body){
+            body.forEach(function(user){
+              if (user.phone == number){
+                return resolve({
+                  id : user.id,
+                  name : user.name,
+                  phone_number : user.phone,
+                  hourly : user.hourly
+                });
+              }
+              resolve({err : "User with that number was not found."});
+            })
+          })
+          .catch(function(err){
+            reject(err);
+          });
+      });
+    },
+    getUserByName : function(name){
+      return new Promise(function(resolve, reject){
+        var returnUsers = [];
+        t.users.get()
+          .then(function(users){
+            users.forEach(function(user){
+              if (user.name.toLowerCase() == name.toLowerCase()){
+                returnUsers.push({
+                  id : user.id,
+                  name : user.name,
+                  phone_number : user.phone,
+                  hourly : user.hourly
+                });
+              } else {
+                var split = user.name.split(' ');
+                for(var i = 0; i< split.length; i++){
+                  if (split[i].toLowerCase() == name.toLowerCase()){
+                    returnUsers.push({
+                      id : user.id,
+                      name : user.name,
+                      phone_number : user.phone,
+                      hourly : user.hourly
+                    });
+                    break;
+                  }
+                }
+              }
+            });
+          })
+      });
+    }
+  },
+
+  rosters : {
+    vars : {base : t.vars.api_base + 'v2/rosters/'},
+    on : function(date){
+      // returns the schedules for the date
+      return new Promise(function(resolve, reject){
+        t.request('GET', t.rosters.vars.base + "on/" + date)
+          .then(function(resp, body){
+            if (resp.statusCode == 204){
+              return resolve({err : "There is no roster for that date"});
+            }
+            for(var i = 0; i < body.schedules.length; i++){
+              var schedule = body.schedules[i];
+              if (schedule.date == date){
+                return resolve(schedule.schedules);
+              }
+            }
+          })
+          .catch(function(err){
+            reject(err);
+          })
+      });
+    },
+
+    containing : function(date){
+      return new Promise(function(resolve, reject){
+        t.request('GET', t.rosters.vars.base + "on/" + date)
+          .then(function(resp, body){
+            if (resp.statusCode == 204){
+              return resolve({err : "There is no roster for that date"});
+            }
+            return body;
+          })
+          .catch(function(err){
+            reject(err);
+          })
+      });
+    }
+  },
+
+  schedules : {
+    vars : {base : t.vars.api_base + 'v2/schedules'},
+    get : function(ids){}
   }
 };
