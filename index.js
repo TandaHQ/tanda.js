@@ -7,7 +7,7 @@ var vars = {
   api_base: 'https://my.tanda.co/api/'
 };
 
-module.exports = t = {
+var t = {
 
   init: function (client_id, client_secret) {
     vars.client_id = client_id;
@@ -138,10 +138,10 @@ module.exports = t = {
       });
     },
     serialize : function(fn){
-      t.vars.serialize = fn;
+      vars.serialize = fn;
     },
     deserialize : function(fn){
-      t.vars.deserialize = fn;
+      vars.deserialize = fn;
     }
 
   },
@@ -259,7 +259,7 @@ module.exports = t = {
   },
 
   rosters : {
-    vars : {base : t.vars.api_base + 'v2/rosters/'},
+    vars : {base : vars.api_base + 'v2/rosters/'},
     on : function(date){
       // returns the schedules for the date
       return new Promise(function(resolve, reject){
@@ -308,7 +308,7 @@ module.exports = t = {
   },
 
   shifts : {
-    vars : {base : t.vars.api_base + 'v2/shifts/'},
+    vars : {base : vars.api_base + 'v2/shifts/'},
     get : function (id) {
       return new Promise(function(resolve, reject) {
         t.request('GET', t.shifts.vars.base + id + '?show_costs=true')
@@ -375,7 +375,7 @@ module.exports = t = {
   },
 
   schedules : {
-    vars : {base : t.vars.api_base + 'v2/schedules'},
+    vars : {base : vars.api_base + 'v2/schedules'},
     get : function(id) {
       return new Promise(function(resolve, reject) {
         t.request('GET', t.schedules.vars.base + id + '?show_costs=true')
@@ -425,3 +425,5 @@ module.exports = t = {
     }
   }
 };
+
+module.exports = t;
