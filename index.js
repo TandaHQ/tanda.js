@@ -358,6 +358,52 @@ module.exports = t = {
 
   schedules : {
     vars : {base : t.vars.api_base + 'v2/schedules'},
-    get : function(ids){}
+    get : function(id) {
+      return new Promise(function(resolve, reject) {
+        t.request('GET', t.schedules.vars.base + id + '?show_costs=true')
+          .then(function(resp, body) {
+            return resolve(body);
+          })
+          .catch(function(err) {
+            reject(err);
+          })
+      });
+    },
+
+    update : function (schedule) {
+      return new Promise(function(resolve, reject) {
+        t.request('PUT', t.schedules.vars.base + id, schedule)
+          .then(function(resp, body) {
+            return resolve(body);
+          })
+          .catch(function(err) {
+            reject(err);
+          })
+      });
+    },
+
+    delete : function (id) {
+      return new Promise(function(resolve, reject) {
+        t.request('DELETE', t.schedules.vars.base + id)
+          .then(function(resp, body) {
+            return resolve({'success' : true});
+          })
+          .catch(function(err) {
+            reject(err);
+          })
+      });
+    },
+
+    create : function (schedule) {
+      return new Promise(function(resolve, reject) {
+        t.request('POST', t.schedules.vars.base, schedule)
+          .then(function(resp, body) {
+            return resolve(body);
+          })
+          .catch(function(err) {
+            reject(err);
+          })
+      });
+    }
   }
 };
