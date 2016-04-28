@@ -128,6 +128,40 @@ optional.  All the base method in the wrapper are available regardless.
         * `show_costs` (optional) - receive costs back with the roster - (bool)
     * Returns - schedules (array) for the date passed in
 
+### Schedules
+* `tanda.schedules.gets(ids, shows_costs)`
+    * Endpoint : [/api/v2/schedules{?ids,show_costs}](https://my.tanda.co/api/v2/documentation#schedules-schedule-list)
+    * Get the schedules identified by the provided IDs
+    * Parameters
+        * `ids` (required) - Array of ids to look for - (array)
+        * `show_costs` (optional) - receive costs back with the roster - (bool)
+    * Returns - schedules (array) for the valid IDs
+* `tanda.schedules.create(schedule)`
+    * Endpoint : [/api/v2/schedules](https://my.tanda.co/api/v2/documentation#schedules-schedule-list-post)
+    * Create a schedule
+    * Parameters
+        * `schedule` (required) - The schedule object to create - (object)
+    * Returns - The schedule object, as returned by the server (ID, Roster ID, etc added)
+* `tanda.schedules.get(id, shows_costs)`
+    * Endpoint : [/api/v2/schedules/{id}{?show_costs}](https://my.tanda.co/api/v2/documentation#schedules-schedule-get)
+    * Get the schedule identified by the provided ID.
+    * Parameters
+        * `id` (required) - ID to look for - (string/int)
+        * `show_costs` (optional) - receive costs back with the roster - (bool)
+    * Returns - schedules (array) for the valid IDs
+* `tanda.schedules.update(id, update)`
+    * Endpoint : [/api/v2/schedules/{id}](https://my.tanda.co/api/v2/documentation#schedules-schedule-put)
+    * Update the information for the schedule identified by `id` with the information in `update`
+    * Parameters
+        * `id` (required) - ID to update - (string/int)
+        * `update` (required) - Information to change/add the the schedule - (object)
+    * Returns - The new schedule, complete, from the server - (object)
+* `tanda.schedules.delete(id)`
+    * Endpoint : [/api/v2/schedules/{id}](https://my.tanda.co/api/v2/documentation#schedules-schedule-put)
+    * Delete the schedule identified by `id`
+    * Parameters
+        * `id` (required) - ID to delete - (string/int)
+    * Returns - nil
 
 ## Licence
 Officially coming soon.
