@@ -7,15 +7,20 @@ var vars = {
   api_base: 'https://my.tanda.co/api/'
 };
 
+/*
+   "Sugar Methods" provide additional functionality on top of the Tanda API by performing some common interactions
+   in the wrapper so you don't need to write the same boilerplate a bunch of times.  They are not forced on you.  Only
+   use them if you wish.
+*/
+
+// TODO: make sure all these calls are only using one return call for the promise
+// TODO: Add in validation/error checking
+
 var t = {
 
   init: function (client_id, client_secret) {
     vars.client_id = client_id;
     vars.client_secret = client_secret;
-  },
-
-  checkVars: function () {
-    console.log(vars);
   },
 
   auth: {
@@ -72,9 +77,12 @@ var t = {
       var scope;
       if (options.scope) {
         scope = options.scope;
+        this.scope = options.scope;
       } else {
         scope = options.scopes.join(' ');
+        this.scope = options.scopes;
       }
+
       t.auth.vars.redirect_uri = options.redirect;
 
       this.vars.redirect_url = base_url + 'scope=' + scope + '&client_id=' + vars.client_id
@@ -103,9 +111,9 @@ var t = {
         vars.expires = body.created_at + body.expires_in;
         vars.refresh_token = body.refresh_token;
         req.client = {
-          access_token : vars.access_token,
-          expires : vars.expires,
-          refresh_token : vars.refresh_token
+          access_token: vars.access_token,
+          expires: vars.expires,
+          refresh_token: vars.refresh_token
         };
         next();
       });
@@ -133,14 +141,21 @@ var t = {
         });
       });
     },
-    serialize : function(fn){
+    serialize: function (fn) {
       vars.serialize = fn;
     },
-    deserialize : function(fn){
+    deserialize: function (fn) {
       vars.deserialize = fn;
     }
-
   },
+
+  /*
+
+   Standard request method for all API calls.
+
+   Resolves it's promise with an object {response, body}
+
+   */
 
   request: function (method, endpoint, body) {
     return new Promise(function (resolve, reject) {
@@ -163,7 +178,7 @@ var t = {
           if (resp.headers['X-RateLimit-RatedLimited'] == 'true') {
             return reject('Rate Limited.');
           }
-          resolve({"resp" : resp, body : JSON.parse(body)});
+          resolve({"response": resp, body: JSON.parse(body)});
         });
       }).catch(function (err) {
         reject(err);
@@ -171,14 +186,246 @@ var t = {
     });
   },
 
+  rosters: {
+    vars: {base: 'v2/rosters/'},
+
+    get: function (id, show_costs) {
+      var url = this.vars.base + id;
+      if (show_costs) {
+        url += '?show_costs=true'
+      }
+      return new Promise(function (resolve, reject) {
+        t.request('GET', url)
+          .then(function (res) {
+            return resolve(res.body);
+          })
+          .catch(function (err) {
+            return reject(err);
+          })
+      });
+    },
+
+    current: function (show_costs) {
+      var url = this.vars.base + 'current';
+      if (show_costs) {
+        url += '?show_costs=true'
+      }
+      return new Promise(function (resolve, reject) {
+        t.request('GET', url)
+          .then(function (res) {
+            return resolve(res.body);
+          })
+          .catch(function (err) {
+            return reject(err);
+          })
+      });
+    },
+
+    contains: function (date, show_costs) {
+      return new Promise(function (resolve, reject) {
+        var url = this.vars.base + 'on/' + date;
+        if (show_costs){
+          url += '?show_costs=true'
+        }
+        t.request('GET', url)
+          .then(function (res) {
+            if (resp.statusCode == 204) {
+              return reject({err: "There is no roster for that date"});
+            }
+            return resolve(res.body);
+          })
+          .catch(function (err) {
+            reject(err);
+          })
+      });
+    },
+
+    // --------- Sugar Methods --------------
+
+    onDate: function (date) {
+      // returns the schedules for the date
+      return new Promise(function (resolve, reject) {
+        t.request('GET', t.rosters.vars.base + "on/" + date)
+          .then(function (res) {
+            if (res.response.statusCode == 204) {
+              return reject({err: "There is no roster for that date"});
+            }
+            for (var i = 0; i < res.body.schedules.length; i++) {
+              var schedule = res.body.schedules[i];
+              if (schedule.date == date) {
+                return resolve(schedule.schedules);
+              }
+            }
+            return reject({err : 'That roster should exist, but it wasn\'t found.'});
+          })
+          .catch(function (err) {
+            reject(err);
+          })
+      });
+    }
+  },
+
+  schedules: {
+    vars: {base: 'v2/schedules/'},
+    gets: function (ids, show_costs) {
+      return new Promise(function (resolve, reject) {
+          var url = this.vars.base + 'schedules?ids=';
+          if (ids) {
+            if (typeof ids == 'object') {
+              url += ids.join(',');
+            } else {
+              return reject('Invalid IDs.  If you are looking for just one, try `tanda.schedules.get(id)`.  Otherwise, pass in' +
+                'an array of IDs to look for');
+            }
+          }
+          if (show_costs){
+            url += '&show_costs = true';
+          }
+          t.request('GET', url)
+            .then(function(res){
+              return resolve(res.body);
+            })
+            .catch(function(err){
+              return reject(err);
+            })
+        }
+      )
+    },
+
+    create: function (schedule) {
+      return new Promise(function (resolve, reject) {
+        t.request('POST', this.vars.base, schedule)
+          .then(function (res) {
+            return resolve(res.body);
+          })
+          .catch(function (err) {
+            return reject(err);
+          })
+      });
+    },
+
+    get: function (id, show_costs) {
+      return new Promise(function (resolve, reject) {
+        var url = this.vars.base + id;
+        if (show_costs){
+          url += '?show_costs=true'
+        }
+        t.request('GET', url)
+          .then(function (res) {
+            return resolve(res.body);
+          })
+          .catch(function (err) {
+            return reject(err);
+          })
+      });
+    },
+
+    update: function (id, update) {
+      return new Promise(function (resolve, reject) {
+        t.request('PUT', this.vars.base + id, update)
+          .then(function (res) {
+            return resolve(res.body);
+          })
+          .catch(function (err) {
+            return reject(err);
+          })
+      });
+    },
+
+    delete: function (id) {
+      return new Promise(function (resolve, reject) {
+        t.request('DELETE', t.schedules.vars.base + id)
+          .then(function (res) {
+            if (res.response.statusCode == 204){
+              return resolve({'success': true});
+            } else {
+              reject(res.response);
+            }
+          })
+          .catch(function (err) {
+            reject(err);
+          })
+      });
+    }
+  },
+
+  timesheets: {},
+
+  shifts: {
+    vars: {base: 'v2/shifts/'},
+    get: function (id) {
+      return new Promise(function (resolve, reject) {
+        t.request('GET', t.shifts.vars.base + id + '?show_costs=true')
+          .then(function (resp, body) {
+            return resolve(body);
+          })
+          .catch(function (err) {
+            reject(err);
+          })
+      });
+    },
+
+    update: function (id, newStart, newFinish) {
+      return new Promise(function (resolve, reject) {
+        t.request('PUT', t.shifts.vars.base + id, {'start': newStart, 'finish': newFinish})
+          .then(function (resp, body) {
+            return resolve(body);
+          })
+          .catch(function (err) {
+            reject(err);
+          })
+      });
+    },
+
+    delete: function (id) {
+      return new Promise(function (resolve, reject) {
+        t.request('DELETE', t.shifts.vars.base + id)
+          .then(function (resp, body) {
+            return resolve({'success': true});
+          })
+          .catch(function (err) {
+            reject(err);
+          })
+      });
+    },
+
+    approve: function (id) {
+      return new Promise(function (resolve, reject) {
+        t.request('PUT', t.shifts.vars.base + id, {'status': 'APPROVED'})
+          .then(function (resp, body) {
+            return resolve(body);
+          })
+          .catch(function (err) {
+            reject(err);
+          })
+      });
+    },
+
+    create: function (shift) {
+      return new Promise(function (resolve, reject) {
+        if (!(shift && shift.user_id && shift.date && shift.start && shift.finish && shift.location)) {
+          return resolve({err: "Malformed shift object"});
+        }
+
+        t.request('POST', t.shifts.vars.base, shift)
+          .then(function (resp, body) {
+            return resolve(body);
+          })
+          .catch(function (err) {
+            reject(err);
+          })
+      });
+    }
+  },
+
   users: {
     vars: {
-      base : 'v2/users/'
+      base: 'v2/users/'
     },
-    get : function(){
-      return new Promise(function(resolve, reject){
+    get: function () {
+      return new Promise(function (resolve, reject) {
         t.request('GET', t.users.vars.base + '?show_wages=true')
-          .then(function(resp){
+          .then(function (resp) {
             resolve(resp.body);
           })
       });
@@ -202,56 +449,56 @@ var t = {
       });
     },
     getUserByPhoneNumber: function (number) {
-      return new Promise(function(resolve, reject){
+      return new Promise(function (resolve, reject) {
         t.request('GET', t.users.vars.base + '?show_wages=true')
-          .then(function(response){
-            response.body.forEach(function(user){
+          .then(function (response) {
+            response.body.forEach(function (user) {
               console.log(user);
-              if (user.phone == number){
+              if (user.phone == number) {
                 return resolve({
-                  id : user.id,
-                  name : user.name,
-                  phone_number : user.phone,
-                  hourly : user.hourly_rate
+                  id: user.id,
+                  name: user.name,
+                  phone_number: user.phone,
+                  hourly: user.hourly_rate
                 });
               }
             });
-            resolve({err : "User with that number was not found."});
+            resolve({err: "User with that number was not found."});
           })
-          .catch(function(err){
+          .catch(function (err) {
             reject(err);
           });
       });
     },
-    getUserByName : function(name){
-      return new Promise(function(resolve, reject){
+    getUserByName: function (name) {
+      return new Promise(function (resolve, reject) {
         var returnUsers = [];
         t.users.get()
-          .then(function(users){
-            users.forEach(function(user){
-              if (user.name.toLowerCase() == name.toLowerCase()){
+          .then(function (users) {
+            users.forEach(function (user) {
+              if (user.name.toLowerCase() == name.toLowerCase()) {
                 returnUsers.push({
-                  id : user.id,
-                  name : user.name,
-                  phone_number : user.phone,
-                  hourly : user.hourly_rate
+                  id: user.id,
+                  name: user.name,
+                  phone_number: user.phone,
+                  hourly: user.hourly_rate
                 });
               } else {
                 var split = user.name.split(' ');
-                for(var i = 0; i< split.length; i++){
-                  if (split[i].toLowerCase() == name.toLowerCase()){
+                for (var i = 0; i < split.length; i++) {
+                  if (split[i].toLowerCase() == name.toLowerCase()) {
                     returnUsers.push({
-                      id : user.id,
-                      name : user.name,
-                      phone_number : user.phone,
-                      hourly : user.hourly_rate
+                      id: user.id,
+                      name: user.name,
+                      phone_number: user.phone,
+                      hourly: user.hourly_rate
                     });
                     break;
                   }
                 }
               }
             });
-            if (returnUsers.length == 1){
+            if (returnUsers.length == 1) {
               resolve(returnUsers[0]);
             } else {
               resolve(returnUsers);
@@ -261,173 +508,27 @@ var t = {
     }
   },
 
-  rosters : {
-    vars : {base : 'v2/rosters/'},
-    onDate : function(date){
-      // returns the schedules for the date
-      return new Promise(function(resolve, reject){
-        t.request('GET', t.rosters.vars.base + "on/" + date)
-          .then(function(resp, body){
-            if (resp.statusCode == 204){
-              return resolve({err : "There is no roster for that date"});
-            }
-            body = resp.body; //why?
-            for(var i = 0; i < body.schedules.length; i++){
-              var schedule = body.schedules[i];
-              if (schedule.date == date){
-                return resolve(schedule.schedules);
-              }
-            }
-          })
-          .catch(function(err){
-            reject(err);
-          })
-      });
-    },
-    containing : function(date){
-      return new Promise(function(resolve, reject){
-        t.request('GET', t.rosters.vars.base + "on/" + date)
-          .then(function(resp, body){
-            if (resp.statusCode == 204){
-              return resolve({err : "There is no roster for that date"});
-            }
-            return body;
-          })
-          .catch(function(err){
-            reject(err);
-          })
-      });
-    },
-    get : function(id){
-      return new Promise(function(resolve, reject){
-        t.request('GET', t.rosters.vars.base + '/' + id)
-          .then(function(resp, body){
+  departments: {},
 
-          })
-          .catch(function(err){
-            reject(err);
-          })
-      });
-    }
-  },
+  roles: {},
 
-  shifts : {
-    vars : {base : 'v2/shifts/'},
-    get : function (id) {
-      return new Promise(function(resolve, reject) {
-        t.request('GET', t.shifts.vars.base + id + '?show_costs=true')
-          .then(function(resp, body) {
-            return resolve(body);
-          })
-          .catch(function(err) {
-            reject(err);
-          })
-      });
-    },
+  award_tags: {},
 
-    update : function (id, newStart, newFinish) {
-      return new Promise(function(resolve, reject) {
-        t.request('PUT', t.shifts.vars.base + id, {'start': newStart, 'finish': newFinish})
-          .then(function(resp, body) {
-            return resolve(body);
-          })
-          .catch(function(err) {
-            reject(err);
-          })
-      });
-    },
+  leave: {},
 
-    delete : function (id) {
-      return new Promise(function(resolve, reject) {
-        t.request('DELETE', t.shifts.vars.base + id)
-          .then(function(resp, body) {
-            return resolve({'success' : true});
-          })
-          .catch(function(err) {
-            reject(err);
-          })
-      });
-    },
+  unavailability: {},
 
-    approve : function (id) {
-      return new Promise(function(resolve, reject) {
-        t.request('PUT', t.shifts.vars.base + id, {'status': 'APPROVED'})
-          .then(function(resp, body) {
-            return resolve(body);
-          })
-          .catch(function(err) {
-            reject(err);
-          })
-      });
-    },
+  datastreams: {},
 
-    create : function (shift) {
-      return new Promise(function(resolve, reject) {
-        if(!(shift && shift.user_id && shift.date && shift.start && shift.finish && shift.location)) {
-          return resolve({err : "Malformed shift object"});
-        }
+  store_stats: {},
 
-        t.request('POST', t.shifts.vars.base, shift)
-          .then(function(resp, body) {
-            return resolve(body);
-          })
-          .catch(function(err) {
-            reject(err);
-          })
-      });
-    }
-  },
+  devices: {},
 
-  schedules : {
-    vars : {base : 'v2/schedules'},
-    get : function(id) {
-      return new Promise(function(resolve, reject) {
-        t.request('GET', t.schedules.vars.base + id + '?show_costs=true')
-          .then(function(resp, body) {
-            return resolve(body);
-          })
-          .catch(function(err) {
-            reject(err);
-          })
-      });
-    },
+  clockins: {},
 
-    update : function (schedule) {
-      return new Promise(function(resolve, reject) {
-        t.request('PUT', t.schedules.vars.base + schedule.id, schedule.info)
-          .then(function(resp, body) {
-            return resolve(body);
-          })
-          .catch(function(err) {
-            reject(err);
-          })
-      });
-    },
+  sms: {}
 
-    delete : function (id) {
-      return new Promise(function(resolve, reject) {
-        t.request('DELETE', t.schedules.vars.base + id)
-          .then(function(resp, body) {
-            return resolve({'success' : true});
-          })
-          .catch(function(err) {
-            reject(err);
-          })
-      });
-    },
 
-    create : function (schedule) {
-      return new Promise(function(resolve, reject) {
-        t.request('POST', t.schedules.vars.base, schedule)
-          .then(function(resp, body) {
-            return resolve(body);
-          })
-          .catch(function(err) {
-            reject(err);
-          })
-      });
-    }
-  }
 };
 
 module.exports = t;
