@@ -13,6 +13,8 @@ great for daisy-chaining.
 
 ## How to use
 
+`npm i -S tanda`, or `npm install --save tanda`.
+
 ### Setup Code (Probably in app.js)
 ```
 var tanda = require('tanda');
