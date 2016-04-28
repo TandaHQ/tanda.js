@@ -74,13 +74,60 @@ To generalise, all methods are available at `tanda.<endpoint>.method`.  The name
 operation type, or if multiple (eg. get current, get containing), the name will be whatever comes after the endpoint in
 the request URI.  All methods are (will be) under 'Complete Method List', for reference.
 
+All API methods (not authentication) return a promise.  The return values listed in the Complete Method List are what
+the promise is resolved with.  Remember to always `catch()` or `.then(success, fail)` to handle an error.
+
+Additionally, all schemas for objects returned are available in the API docs
+
 ## Full Features
 Coming soon...
 It's mostly just the wrapper.  There are a couple of sugar functions to make life a bit easier, but these are completely
 optional.  All the base method in the wrapper are available regardless.
 
 ## Complete Method List
-Coming soon...
+### Authentication
+* `tanda.auth.init(client_id, client_secret)`
+    * initialises the authentication wrapper with the required values
+    * parameters
+        * client_id - your client ID, as gotten from the Tanda developer dash
+        * client_secret - your client secret key, as gotten from the Tanda developer dash
+    * returns - nothing
+* `tanda.auth.request`
+    * standard express middleware
+    * redirects users to Tanda to authenticate
+* `tanda.auth.receive`
+    * standard express middleware
+    * receives the access_tokens back from Tanda.
+
+### Rosters
+* `tanda.rosters.get(id, show_costs)`
+    * Endpoint: [/api/v2/rosters/{id}{?show_costs}](https://my.tanda.co/api/v2/documentation#rosters-roster-get)
+    * Get a roster based on a roster ID
+    * Parameters
+        * `id` (required) - the ID of the roster you want to find - (string/int)
+        * `show_costs` (optional) - receive costs back with roster - (bool)
+    * Returns - roster (object)
+* `tanda.rosters.current(show_costs)`
+    * Endpoint : [/api/v2/rosters/current{?show_costs}](https://my.tanda.co/api/v2/documentation#rosters-current-roster-get)
+    * Get the current roster (for the week)
+    * Parameters
+        * `show_costs` (optional) - receive costs back with the roster - (bool)
+    * Returns - roster (object)
+* `tanda.rosters.contains(date, show_costs)`
+    * Endpoint : [/api/v2/rosters/on/{date}{?show_costs}](https://my.tanda.co/api/v2/documentation#rosters-roster-that-contains-date-get)
+    * Get the roster for the week containing `date`
+    * Parameters
+        * `date` (required) - ISO Formatted Date (YYYY-MM-DD) - (string)
+        * `show_costs` (optional) - receive costs back with the roster - (bool)
+    * Returns - roster (object)
+* `tanda.rosters.on_date(date, show_costs)`
+    * Sugar
+    * Get the roster for a particular day
+    * Parameters
+        * `date` (required) - ISO Formatted Date (YYYY-MM-DD) - (string)
+        * `show_costs` (optional) - receive costs back with the roster - (bool)
+    * Returns - schedules (array) for the date passed in
+
 
 ## Licence
 Officially coming soon.
