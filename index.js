@@ -15,6 +15,8 @@ var vars = {
 
 // TODO: make sure all these calls are only using one return call for the promise
 // TODO: Add in validation/error checking
+// TODO: Add in check status code coming back in for each request, and make sure they are what they should be.
+//       At this point I'm more or less just assuming that a resolved request is good.
 
 var t = {
 
@@ -153,7 +155,8 @@ var t = {
 
    Standard request method for all API calls.
 
-   Resolves it's promise with an object {response, body}
+   Resolves its promise with an object {response, body}
+   Rejects its promise with an object {err}.
 
    */
 
@@ -181,7 +184,7 @@ var t = {
           resolve({"response": resp, body: JSON.parse(body)});
         });
       }).catch(function (err) {
-        reject(err);
+        reject({err : err});
       });
     });
   },
@@ -349,7 +352,87 @@ var t = {
     }
   },
 
-  timesheets: {},
+  timesheets: {
+    vars : { base : 'v2/timesheets/'},
+    current : function(show_costs){
+      return new Promise(function(resolve, reject) {
+        var url = this.vars.base + 'current';
+        if (show_costs) {
+          url += '?show_costs=true';
+        }
+
+        t.request('GET', url)
+          .then(function(res){
+            return resolve(res.body);
+          })
+          .catch(function(err){
+            return reject(err);
+          })
+
+      });
+    },
+
+    on : function(date, show_costs){
+      return new Promise(function(resolve, reject){
+        var url = this.vars.base + 'on/' + date;
+        if (show_costs){
+          url += '?show_costs=true'
+        }
+        t.request('GET', url)
+          .then(function(res){
+            return resolve(res.body);
+          })
+          .catch(function(err){
+            return reject(err);
+          })
+      });
+    },
+
+    /*
+      This is not implemented exactly as per a wrapper.  I wasn't sure how to handle the nested option well,
+          so I just made date optional, and if it's passed in, we're searching on date, otherwise, current.
+     */
+    for : function(user_id, date, show_costs){
+      return new Promise(function(resolve, reject){
+        var url = this.vars.base + 'for/' + user_id + '/';
+
+        if (date){
+          url += 'on/' + date;
+        } else {
+          url += 'current';
+        }
+
+        if (show_costs){
+          url += '?show_costs=true';
+        }
+
+        t.request('GET', url)
+          .then(function(res){
+            return resolve(res.body);
+          })
+          .catch(function(err){
+            return reject(err);
+          });
+      });
+
+    },
+
+    get : function(id, show_costs){
+      return new Promise(function(resolve, reject){
+        var url = this.vars.base + id;
+        if (show_costs){
+          url += '?show_costs=true';
+        }
+        t.request('GET', url)
+          .then(function(res){
+            return resolve(res.body);
+          })
+          .catch(function(err){
+            return reject(err);
+          })
+      });
+    }
+  },
 
   shifts: {
     vars: {base: 'v2/shifts/'},
@@ -527,7 +610,6 @@ var t = {
   clockins: {},
 
   sms: {}
-
 
 };
 
