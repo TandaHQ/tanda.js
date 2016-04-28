@@ -245,25 +245,25 @@ var t = {
 
     // --------- Sugar Methods --------------
 
-    onDate: function (date) {
+    on_date: function (date, show_costs) {
       // returns the schedules for the date
       return new Promise(function (resolve, reject) {
-        t.request('GET', t.rosters.vars.base + "on/" + date)
-          .then(function (res) {
-            if (res.response.statusCode == 204) {
-              return reject({err: "There is no roster for that date"});
+        show_costs = show_costs || null;
+        this.contains(date, show_costs)
+          .then(function(roster){
+            if (!roster.schedules || roster.schedules.length < 1){
+              return reject({err : "Malformed roster object"});
             }
-            for (var i = 0; i < res.body.schedules.length; i++) {
-              var schedule = res.body.schedules[i];
-              if (schedule.date == date) {
-                return resolve(schedule.schedules);
+            for (var i = 0; i < roster.schedules.length; i++) {
+              if (roster.schedules[i].date == date) {
+                return resolve(roster.schedules[i].schedules);
               }
             }
             return reject({err : 'That roster should exist, but it wasn\'t found.'});
           })
-          .catch(function (err) {
-            reject(err);
-          })
+          .catch(function(err){
+            return reject(err);
+          });
       });
     }
   },
