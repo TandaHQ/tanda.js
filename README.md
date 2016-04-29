@@ -62,7 +62,7 @@ If the method has a show costs option (a lot of them do, but you'll need the 'co
  must be passed through before show cost.
 
 To create a schedule, pass in the schedule object, as seen in the API docs,
-```
+```javascript
 tanda.schedules.create(new_schedule)
   .then(function(schedule){
     console.log(schedule); // contains the recently created schedule as returned by the server
