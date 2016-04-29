@@ -32,10 +32,10 @@ tanda.auth.init(auth_options);
 ### Authenticating
 ```
 // the route users go to login
-app.get('/login', tanda.auth.request());
+app.get('/login', tanda.auth.request;
 
 // your pre-defined callback url (set in the options before)
-app.get('/authed', tanda.auth.receive(), function(req, res){
+app.get('/authed', tanda.auth.receive, function(req, res){
    res.send("You're authenticated! Your access token expires at " + req.client.expires + ".");
    // or whatever you want to happen.
    // the user object is now stored in req.client, but that will definitely change in future versions.
