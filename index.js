@@ -591,7 +591,20 @@ var t = {
     }
   },
 
-  departments: {},
+  departments: {
+    vars : { base : 'v2/departments/' },
+    gets : function(){
+      return new Promise(function(resolve, reject){
+        t.request('GET', this.vars.base)
+          .then(function(res){
+            return resolve(res.body);
+          })
+          .catch(function(err){
+            return reject(err);
+          })
+      });
+    }
+  },
 
   roles: {},
 
