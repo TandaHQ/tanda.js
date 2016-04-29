@@ -193,11 +193,11 @@ var t = {
     vars: {base: 'v2/rosters/'},
 
     get: function (id, show_costs) {
-      var url = this.vars.base + id;
-      if (show_costs) {
-        url += '?show_costs=true'
-      }
       return new Promise(function (resolve, reject) {
+        var url = this.vars.base + id;
+        if (show_costs) {
+          url += '?show_costs=true'
+        }
         t.request('GET', url)
           .then(function (res) {
             return resolve(res.body);
@@ -209,11 +209,11 @@ var t = {
     },
 
     current: function (show_costs) {
-      var url = this.vars.base + 'current';
-      if (show_costs) {
-        url += '?show_costs=true'
-      }
       return new Promise(function (resolve, reject) {
+        var url = this.vars.base + 'current';
+        if (show_costs) {
+          url += '?show_costs=true'
+        }
         t.request('GET', url)
           .then(function (res) {
             return resolve(res.body);
