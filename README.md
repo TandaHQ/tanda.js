@@ -30,7 +30,7 @@ tanda.auth.init(auth_options);
 ```
 
 ### Authenticating
-```
+```javascript
 // the route users go to login
 app.get('/login', tanda.auth.request;
 
@@ -47,7 +47,7 @@ After authentication, the methods line up almost exactly with what is on the
 [Tanda Developer Docs](https://my.tanda.co/api/v2/documentation).
 
 E.g, to get the current roster,
-```
+```javascript
 tanda.rosters.current(true) // show cost
   .then(function(roster){
     console.log(roster); // a JSON object containing the current roster.
