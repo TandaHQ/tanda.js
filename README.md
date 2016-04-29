@@ -16,7 +16,7 @@ great for daisy-chaining.
 `npm i -S tanda`, or `npm install --save tanda`.
 
 ### Setup Code (Probably in app.js)
-```
+```javascript
 var tanda = require('tanda');
 tanda.init(MY_API_KEY, MY_API_SECRECT);
 
