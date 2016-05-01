@@ -1,3 +1,6 @@
+var fs = require('fs'),
+  path = require('path');
+
 module.exports = (()=> {
   this.api = 'https://my.tanda.co/api/v2/';
 
@@ -14,16 +17,20 @@ module.exports = (()=> {
   var express = (req, res, next) => {
     // somehow need to maintain here the req object
     // need to take the req.tanda.access_token and attach it to `this`
-    // 
+    // still not sure yet
   };
-  
+
   var auth = require('./auth').call(this);
   this.request = require('./request').call(this);
 
-  return {
+  var objects = {
     init,
-    auth,
-    express,
-    request : this.request
-  }
+    auth
+  };
+
+  fs.readdirSync('./objects').forEach((object) => {
+    objects[object.slice(0, -3)] = require(path.join(__dirname, 'objects', object)).call(this);
+  });
+
+  return objects;
 })();

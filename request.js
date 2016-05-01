@@ -5,7 +5,6 @@ let allowed_methods = ['GET', 'POST', 'PUT', 'DELETE'];
 
 module.exports = function () {
   return (method, endpoint, data = {}) => {
-    console.log(this);
     return new Promise((resolve, reject) => {
       if (allowed_methods.indexOf(method.toUpperCase()) < 0) {
         return reject({err: 'Invalid Request Method'});
@@ -14,13 +13,23 @@ module.exports = function () {
       var options = {
         method: method,
         uri: this.api + endpoint,
+        resolveWithFullResponse: true,
         headers : {
           'Authorization' : 'Bearer ' + this.access_token
         },
         body : data,
         json: true
       };
-      console.log(options);
+      _req(options)
+        .then(function(response){
+          if (response.headers['X-RateLimit-RateLimited']){
+            return reject({err : 'Rate Limit Reached'});
+          }
+          return resolve(JSON.parse(response.body));
+        })
+        .catch(function(err){
+          reject(err);
+        });
     });
   };
 
