@@ -22,6 +22,7 @@
   "dependencies": {
     "bluebird": "^3.3.5",
     "query-string": "^4.1.0",
-    "request": "^2.72.0"
+    "request": "^2.72.0",
+    "request-promise": "^3.0.0"
   }
 }
