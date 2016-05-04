@@ -2,16 +2,16 @@ var _req = require('request-promise'),
   Promise = require('bluebird');
 
 module.exports = function(){
-  function buildUrl(){
+  var buildUrl = () => {
     var scopes;
-    if (typeof this.scopes === object){
+    if (typeof this.scopes === 'object'){
       scopes = '' + this.scopes.join(' ');
     } else {
       scopes = this.scopes;
     }
-    return `${this.api}oauth/authorize?scope=${scopes}&client_id=${this.client_id}`
+    return `${this.api.slice(0, -3)}oauth/authorize?scope=${scopes}&client_id=${this.client_id}`
       + `&redirect_uri=${this.redirect_url}&response_type=code`;
-  }
+  };
 
   var authorize = (req, res, next) => {
     console.log('auth.authorize');
@@ -20,11 +20,11 @@ module.exports = function(){
     if (req.query.code){
       // action the response from Tanda.
       token(req, next, req.query.code)
-        .then(function(){
+        .then(() => {
           // save the refresh_token into the database for that user.
           next();
         })
-        .catch(function(err){
+        .catch((err) => {
           next(err);
         })
     } else {
@@ -38,11 +38,11 @@ module.exports = function(){
    * @param {string} refresh_token - The user's refresh token
    */
   var refresh = (refresh_token) => {
-    return new Promise(function(resolve, reject){
+    return new Promise((resolve, reject) => {
       // build the request object
       var options = {
           method: 'POST',
-          uri: this.api + 'oauth/token',
+          uri: this.api.slice(0, -3) + 'oauth/token',
           form: {
             client_id : this.client_id,
             client_secret : this.client_secret,
@@ -53,13 +53,13 @@ module.exports = function(){
           json: true
       };
       _req(options)
-        .then(function(body){
+        .then((body) => {
           // update the token into the DB/whatever user is doing with it
           this.refreshToken(body.refresh_token);
           // TODO: figure out neatest way of attaching access_token + expires to req.tanda
           // Maybe just attach it to the session, and pull it out + attach it in the express function
         })
-        .catch(function(err){
+        .catch((err) => {
           reject(err);
         })
 
@@ -67,22 +67,23 @@ module.exports = function(){
   };
 
   var token = (req, next, code) => {
-    return new Promise(function(resolve, reject){
+    return new Promise((resolve, reject) => {
       // build the object to send
       var options = {
         method: 'POST',
-        uri: this.api + 'oauth/token',
+        uri: this.api.slice(0, -3) + 'oauth/token',
         form: {
           client_id : this.client_id,
           client_secret : this.client_secret,
           code,
-          redirect_uri : buildUrl(),
+          redirect_uri : this.redirect_url,
           grant_type : 'authorization_code'
         },
         json: true
       };
+      console.log(options);
       _req(options)
-        .then(function(res){
+        .then((res) => {
           req.tanda = {
             access_token : res.access_token,
             expires : res.created_at + res.expires_in,
@@ -90,7 +91,7 @@ module.exports = function(){
           };
           resolve();
         })
-        .catch(function(err){
+        .catch((err) => {
           reject(err);
         });
     });
