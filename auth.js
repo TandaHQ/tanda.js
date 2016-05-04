@@ -89,6 +89,7 @@ module.exports = function(){
             expires : res.created_at + res.expires_in,
             refresh_token : res.refresh_token
           };
+          this.access_token = res.access_token;
           resolve();
         })
         .catch((err) => {
