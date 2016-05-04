@@ -11,6 +11,9 @@ module.exports = (()=> {
     this.redirect_url = options.redirect;
     // this should be a function that takes in a new refresh token and saves it to the DB
     this.updateRefresh = options.refresh;
+    
+    // add in some helper functions
+    this._ = require('./lib');
     // TODO: add in function to add to the session/remove from the session
   };
 
