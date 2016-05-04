@@ -67,7 +67,8 @@ module.exports = function () {
   methods.get = (id, show_costs) => {
     var url = `${endpoint}/${id}` + this._.show(show_costs);
     return this.request('GET', url);
-  }
-
+  };
+  
+  return methods;
 
 };
