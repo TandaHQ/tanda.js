@@ -31,7 +31,11 @@ module.exports = (()=> {
     auth
   };
 
-  fs.readdirSync(path.join(__dirname, 'objects')).forEach((object) => {
+  fs.readdirSync(path.join(__dirname, 'objects'))
+    .filter(function(object) {
+    return object.slice(-3) === '.js';
+  })
+    .forEach((object) => {
     objects[object.slice(0, -3)] = require(path.join(__dirname, 'objects', object)).call(this);
   });
 
