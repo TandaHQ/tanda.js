@@ -20,12 +20,24 @@ module.exports = function () {
         body : data,
         json: true
       };
+      console.log('-------- REQUEST ---------');
+      console.log(options);
       _req(options)
         .then(function(response){
+          console.log('------ RESPONSE --------');
+          console.log(response.headers);
+          console.log('status');
+          console.log(response.statusCode);
+          console.log('body');
+          console.log(response.body);
+          console.log(typeof response.body);
           if (response.headers['X-RateLimit-RateLimited']){
             return reject({err : 'Rate Limit Reached'});
           }
-          return resolve(JSON.parse(response.body));
+          if (response.statusCode == 204) {
+            return resolve({ message : 'No Content' });
+          }
+          return resolve(response.body);
         })
         .catch(function(err){
           reject(err);
