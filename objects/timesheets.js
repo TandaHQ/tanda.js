@@ -53,7 +53,15 @@ module.exports = function () {
      */
     further.current = () => {
       url += `current` + this._.show(show_costs);
-      return this.request('GET', url);
+      return new Promise((resolve, reject) => {
+        this.request('GET', url)
+          .then((res) => {
+            if (res.message) {
+              return reject({ err : `Timesheet doesn't exist` });
+            }
+            return resolve(res);
+          })
+      })
     };
     return further;
   };
