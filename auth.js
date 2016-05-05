@@ -9,7 +9,7 @@ module.exports = function(){
     } else {
       scopes = this.scopes;
     }
-    return `${this.api.slice(0, -3)}oauth/authorize?scope=${scopes}&client_id=${this.client_id}`
+    return `${this.api}oauth/authorize?scope=${scopes}&client_id=${this.client_id}`
       + `&redirect_uri=${this.redirect_url}&response_type=code`;
   };
 
@@ -42,7 +42,7 @@ module.exports = function(){
       // build the request object
       var options = {
           method: 'POST',
-          uri: this.api.slice(0, -3) + 'oauth/token',
+          uri: this.api + 'oauth/token',
           form: {
             client_id : this.client_id,
             client_secret : this.client_secret,
@@ -71,7 +71,7 @@ module.exports = function(){
       // build the object to send
       var options = {
         method: 'POST',
-        uri: this.api.slice(0, -3) + 'oauth/token',
+        uri: this.api + 'oauth/token',
         form: {
           client_id : this.client_id,
           client_secret : this.client_secret,

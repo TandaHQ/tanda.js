@@ -12,7 +12,7 @@ module.exports = function () {
       // build request object
       var options = {
         method: method,
-        uri: this.api + endpoint,
+        uri: this.api + this.version + endpoint,
         resolveWithFullResponse: true,
         headers : {
           'Authorization' : 'Bearer ' + this.access_token

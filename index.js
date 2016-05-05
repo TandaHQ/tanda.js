@@ -2,7 +2,8 @@ var fs = require('fs'),
   path = require('path');
 
 module.exports = (()=> {
-  this.api = 'https://my.tanda.co/api/v2/';
+    this.api = 'https://my.tanda.co/api/';
+    this.version = 'v2';
 
   var init = (options) => {
     this.client_id = options.client_id;
