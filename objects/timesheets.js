@@ -1,3 +1,8 @@
+/**
+ * Timesheets
+ * @module tanda/timesheets
+ */
+
 var Promise = require('bluebird');
 
 module.exports = function () {
@@ -6,6 +11,7 @@ module.exports = function () {
   var methods = {};
 
   /**
+   * @function
    * View the current roster (containing today's date)
    * @param {boolean} show_costs - Show Costs?
    * @returns {Promise} Resolve: the current roster. Reject: {err : 'The error'}
@@ -17,6 +23,7 @@ module.exports = function () {
   };
 
   /**
+   * @function
    * Get the roster on a specified date
    * @param {Date} date - ISO formatted date
    * @param {boolean} show_costs - Show Costs?
@@ -28,6 +35,7 @@ module.exports = function () {
   };
 
   /**
+   * @function
    * Get a roster for a user, on a date, or their current roster.
    * @param {int} user_id - The user ID to look for
    * @param {boolean} show_costs - Show Costs?
@@ -38,6 +46,7 @@ module.exports = function () {
     var further = {};
 
     /**
+     * @function
      * Get the roster for `user_id` on `date`.
      * @param {Date} date - The date to search on
      * @returns {Promise} Resolve: the roster on `date`, for `user_id`, if it exists. Reject: {err : 'The error'}
@@ -48,6 +57,7 @@ module.exports = function () {
     };
 
     /**
+     * @function
      * Get the current roster for `user_id`.
      * @returns {Promise} Resolve: the current roster, for `user_id`, if it exists. Reject: {err : 'The error'}
      */
@@ -60,13 +70,14 @@ module.exports = function () {
               return reject({ err : `Timesheet doesn't exist` });
             }
             return resolve(res);
-          })
-      })
+          });
+      });
     };
     return further;
   };
 
   /**
+   * @function
    * Get a roster by ID
    * @param {int} id - The timesheet ID to search for
    * @param {boolean} show_costs - Show Costs?
