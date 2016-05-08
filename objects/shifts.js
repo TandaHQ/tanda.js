@@ -54,6 +54,16 @@ module.exports = function(){
    */
   methods.delete = (id) => {
     return this.request('DELETE', `${endpoint}/${id}`);
+  };
+
+  /**
+   * Get the applicable allowances for a shift
+   * @param {int} id - Shift to find allowances for
+   * @returns {Promise} Resolve: a list of allowances for the shift. Reject: {err : 'The error'}
+   */
+  methods.allowances = (id) => {
+    var url = `${endpoint}/${id}/applicable_allowances`;
+    return this.request('GET', url);
   }
 
 };
