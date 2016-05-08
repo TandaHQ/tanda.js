@@ -64,6 +64,7 @@ module.exports = function(){
   methods.allowances = (id) => {
     var url = `${endpoint}/${id}/applicable_allowances`;
     return this.request('GET', url);
-  }
+  };
 
+  return methods;
 };
