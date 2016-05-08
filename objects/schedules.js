@@ -7,7 +7,7 @@ module.exports = function(){
     
     /**
      * Get all schedules in the provided list
-     * @param {array} ids - List of ids to query
+     * @param {Array} ids - List of ids to query
      * @param {boolean} show_costs - Show costs?
      */
     methods.gets = (ids, show_costs = false) => {
