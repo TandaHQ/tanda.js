@@ -1,3 +1,8 @@
+/**
+ * Node Tanda - A wrapper for tanda's API
+ * @module tanda
+ */
+
 var fs = require('fs'),
   path = require('path');
 
@@ -32,6 +37,7 @@ module.exports = (()=> {
     auth
   };
 
+  // attach all of the api endpoints to the `tanda` object
   fs.readdirSync(path.join(__dirname, 'objects'))
     .filter(function(object) {
     return object.slice(-3) === '.js';
