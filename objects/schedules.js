@@ -10,7 +10,7 @@ module.exports = function(){
      * @param {array} ids - List of ids to query
      * @param {boolean} show_costs - Show costs?
      */
-    methods.gets = (ids, show_costs) => {
+    methods.gets = (ids, show_costs = false) => {
         var url = endpoint + '?ids=' + ids.join(',') + this._.show(show_costs, false);
         return this.request('GET', url);
     };
@@ -29,7 +29,7 @@ module.exports = function(){
      * @param {boolean} show_costs - Show Costs?
      * @returns {Promise} Resolve: the schedule.  Reject: {err: 'The error'}
      */
-    methods.get = (id, show_costs) => {
+    methods.get = (id, show_costs = false) => {
         var url = endpoint + `/${id}` + this._.show(show_costs);
         return this.request('GET', url);
     };

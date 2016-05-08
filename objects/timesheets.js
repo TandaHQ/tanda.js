@@ -17,7 +17,7 @@ module.exports = function () {
    * @returns {Promise} Resolve: the current roster. Reject: {err : 'The error'}
    *
    */
-  methods.current = (show_costs) => {
+  methods.current = (show_costs = false) => {
     var url = `${endpoint}/current` + this._.show(show_costs);
     return this.request('GET', url);
   };
@@ -29,7 +29,7 @@ module.exports = function () {
    * @param {boolean} show_costs - Show Costs?
    * @returns {Promise} Resolve: the roster on `date`, if it exists. Reject: {err : 'The error'}
    */
-  methods.on = (date, show_costs) => {
+  methods.on = (date, show_costs = false) => {
     var url = `${endpoint}/on/${date}` + this._.show(show_costs);
     return this.request('GET', url);
   };
@@ -41,7 +41,7 @@ module.exports = function () {
    * @param {boolean} show_costs - Show Costs?
    * @returns {{function, function}} - Chainable methods to search for rosters. {@link for#on|on} to search via date. {@link for#current} to search for the current roster.
    */
-  methods.for = (user_id, show_costs) => {
+  methods.for = (user_id, show_costs = false) => {
     var url = `${endpoint}/for/${user_id}/`;
     var further = {};
 
@@ -83,7 +83,7 @@ module.exports = function () {
    * @param {boolean} show_costs - Show Costs?
    * @returns {Promise} Resolve: the roster identified `id`. Reject: {err : 'The error'}
    */
-  methods.get = (id, show_costs) => {
+  methods.get = (id, show_costs = false) => {
     var url = `${endpoint}/${id}` + this._.show(show_costs);
     return this.request('GET', url);
   };
