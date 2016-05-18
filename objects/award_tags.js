@@ -1,5 +1,3 @@
-var Promise = require('bluebird');
-
 module.exports = function(){
   let endpoint = '/award_tags';
 
@@ -9,7 +7,7 @@ module.exports = function(){
    */
   var gets = () => {
     return this.request('GET', endpoint);
-  }
+  };
 
   /**
    * Get a particular award tag based on its ID
@@ -19,7 +17,7 @@ module.exports = function(){
   var get = (id) => {
     var url = `${endpoint}/${id}`;
     return this.request('GET', url);
-  }
+  };
 
   return {
     gets,

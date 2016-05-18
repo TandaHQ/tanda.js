@@ -1,5 +1,3 @@
-var Promise = require('bluebird');
-
 module.exports = function(){
   let endpoint = 'rosters/';
   var get = (id, show_costs = false) => {
