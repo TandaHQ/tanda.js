@@ -1,8 +1,14 @@
+/**
+ * Node Tanda - A wrapper for tanda's API
+ * @module tanda
+ */
+
 var fs = require('fs'),
   path = require('path');
 
 module.exports = (()=> {
-  this.api = 'https://my.tanda.co/api/v2/';
+    this.api = 'https://my.tanda.co/api/';
+    this.version = 'v2';
 
   var init = (options) => {
     this.client_id = options.client_id;
@@ -11,6 +17,9 @@ module.exports = (()=> {
     this.redirect_url = options.redirect;
     // this should be a function that takes in a new refresh token and saves it to the DB
     this.updateRefresh = options.refresh;
+    
+    // add in some helper functions
+    this._ = require('./lib');
     // TODO: add in function to add to the session/remove from the session
   };
 
@@ -28,7 +37,12 @@ module.exports = (()=> {
     auth
   };
 
-  fs.readdirSync('./objects').forEach((object) => {
+  // attach all of the api endpoints to the `tanda` object
+  fs.readdirSync(path.join(__dirname, 'objects'))
+    .filter(function(object) {
+    return object.slice(-3) === '.js';
+  })
+    .forEach((object) => {
     objects[object.slice(0, -3)] = require(path.join(__dirname, 'objects', object)).call(this);
   });
 

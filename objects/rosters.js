@@ -2,27 +2,18 @@ var Promise = require('bluebird');
 
 module.exports = function(){
   let endpoint = 'rosters/';
-  var get = (id, show_costs) => {
-    var url = endpoint + id;
-    if (show_costs){
-      url += '?show_costs=true';
-    }
+  var get = (id, show_costs = false) => {
+    var url = endpoint + id + this._.show(show_costs);
     return this.request('GET', url);
   };
 
-  var current = (show_costs) => {
-    var url = endpoint + 'current';
-    if (show_costs) {
-      url += '?show_costs=true'
-    }
+  var current = (show_costs = false) => {
+    var url = endpoint + 'current' + this._.show(show_costs);
     return this.request('GET', url);
   };
   
-  var on = (date, show_costs) => {
-    var url = `${endpoint}on/${date}`;
-    if (show_costs){
-      url += '?show_costs=true';
-    }
+  var on = (date, show_costs = false) => {
+    var url = `${endpoint}on/${date}` + this._.show(show_costs);
     return this.request('GET', url);
   };
 
