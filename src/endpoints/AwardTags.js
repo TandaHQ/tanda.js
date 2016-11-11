@@ -7,7 +7,10 @@ export default class AwardTags extends Endpoint {
    * Get a list of award tags.
    * @returns {Promise} Resolve: a list of award tags. Reject: {err : 'The error'}
    */
-  gets() {
+  get(id = null) {
+    if (id) {
+      return this.request(`${this.endpoint}/${id}`);
+    }
     return this.request(this.endpoint, 'GET');
   }
 
@@ -16,7 +19,7 @@ export default class AwardTags extends Endpoint {
    * @param {int} id - The id to find
    * @returns {Promise} Resolve: the award tag. Reject: {err : 'The error'}
    */
-  get(id) {
-    return this.request(`${this.endpoint}/${id}`);
+  getDeprecated() {
+
   }
 }
