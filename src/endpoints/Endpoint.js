@@ -5,8 +5,12 @@ export default class Endpoint {
     this.Tanda = parent;
   }
 
+  /**
+   * Converts the name of the class to the equivalent Tanda URL endpoint
+   * @returns {string} The endpoint
+   */
   get endpoint() {
-    return `/${this.constructor.name.toLowerCase()}`;
+    return this.constructor.name.split(/(?=[A-Z])/).map(piece => piece.toLowerCase()).join('_');
   }
 
   /**
