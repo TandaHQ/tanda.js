@@ -4,9 +4,9 @@ export default class Departments extends Endpoint {
 
   get(departmentId) {
     if (departmentId == null) {
-      return this.request(this.endpoint, 'GET');
+      return this.request(this.endpoint);
     }
-    return this.request(`${this.endpoint}/${departmentId}`, 'GET');
+    return this.request(`${this.endpoint}/${departmentId}`);
   }
 
   create(department) {

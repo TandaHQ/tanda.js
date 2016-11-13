@@ -13,13 +13,26 @@ export default class Endpoint {
     return this.constructor.name.split(/(?=[A-Z])/).map(piece => piece.toLowerCase()).join('_');
   }
 
+  show = false;
+
+  get showCosts() {
+    this.show = true;
+    return this;
+  }
+
+  getShow() {
+    const s = this.show;
+    this.show = false;
+    return { show_costs: s };
+  }
+
   /**
    * Localised request method
    * @param {String} endpoint The enpoint to post to
-   * @param {String} method The HTTP method [GET, PUT, POST, DELETE]
+   * @param {String} [method=GET] The HTTP method [GET, PUT, POST, DELETE]
    * @param {Array|Object} data The data to send.  For a get request, will be turned into URL params
    */
-  request(endpoint, method, data) {
+  request(endpoint, method = 'GET', data) {
     return this.Tanda.request(endpoint, method, data);
   }
 }

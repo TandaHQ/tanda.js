@@ -1,7 +1,6 @@
 import Endpoint from './Endpoint';
 
-export default class Clockins extends Endpoint {
-  endpoint = '/datastreams';
+export default class Datastreams extends Endpoint {
 
   get(id = null) {
     if (id) {

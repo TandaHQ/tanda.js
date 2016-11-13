@@ -2,10 +2,14 @@ import Endpoint from './Endpoint';
 
 export default class Clockins extends Endpoint {
 
-  endpoint = '/clockins';
-
   get(from, to, userId = '', deviceId = '') {
     return new Promise((resolve, reject) => {
+
+      if (typeof from === 'number') {
+        // getting a specific clockin
+        return resolve(this.require(`${this.endpoint}/${from}`));
+      }
+
       if (userId === '' && deviceId === '') {
         return reject(new Error('One of User ID or Device ID must be set.'));
       }

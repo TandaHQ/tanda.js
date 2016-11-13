@@ -3,6 +3,7 @@
  * @module tanda
  */
 
+import 'babel-polyfill';
 import fs from 'fs';
 import path from 'path';
 
@@ -18,11 +19,12 @@ export default class Tanda {
   }
 
   loadEndpoints() {
-    if (process.title === 'node') {
+    if (process && process.title === 'node') {
       return fs.readdirSync(path.join(__dirname, 'endpoints'))
-        .filter(object => object.slice(-3) === '.js' && object !== 'Endpoint.js' && object === 'AwardTags.js')
+        .filter(object => object.slice(-3) === '.js' && object !== 'Endpoint.js')
         .forEach((object) => {
-          const C = require(path.join(__dirname, 'endpoints', object)).default // eslint-disable-line
+          console.log(object);
+          const C = require(path.join(__dirname, 'endpoints', object)).default; // eslint-disable-line
           this[object.slice(0, -3)] = new C(this);
         });
     }
@@ -30,7 +32,7 @@ export default class Tanda {
     return requireContext.keys().forEach((key) => {
       const k = key.replace('.js', '');
       if (k !== 'Endpoint') {
-        this[k] = requireContext(k).default.bind(this);
+        this[k] = new requireContext(k).default(this); // eslint-disable-line
       }
     });
   }
