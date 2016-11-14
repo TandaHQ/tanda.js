@@ -4,9 +4,8 @@
  */
 
 import 'babel-polyfill';
-import fs from 'fs';
-import path from 'path';
 import request from './lib/request';
+import endpoints from './endpoints';
 
 export default class Tanda {
   constructor(auth = {}) {
@@ -16,21 +15,12 @@ export default class Tanda {
   }
 
   loadEndpoints() {
-    if (process && process.title === 'node') {
-      return fs.readdirSync(path.join(__dirname, 'endpoints'))
-        .filter(object => object.slice(-3) === '.js' && object !== 'Endpoint.js')
-        .forEach((object) => {
-          const name = object.replace('.js', '');
-          const C = require(path.join(__dirname, 'endpoints', object)).default; // eslint-disable-line
-          this[name.charAt(0).toLowerCase() + name.slice(1)] = new C(this);
-        });
-    }
-    const requireContext = require.context('./endpoints', false, /.*\.js$/);
-    return requireContext.keys().forEach((key) => {
-      const k = key.replace('.js', '');
-      if (k !== 'Endpoint') {
-        this[k] = new requireContext(k).default(this); // eslint-disable-line
-      }
+    Object.entries(endpoints).forEach(([key, Value]) => {
+      let name = key.replace('.js', '');
+      name = name.charAt(0).toLowerCase() + name.slice(1);
+      this[name] = new Value(this);
     });
   }
 }
+
+window.Tanda = Tanda;

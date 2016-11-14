@@ -10,7 +10,7 @@ const config = {
     path: path.join(__dirname, 'out'),
     filename: 'tanda.js',
   },
-  target: 'node',
+  devTool: 'inline-source-map',
   resolve: {
     extensions: ['', '.js'],
   },
@@ -24,5 +24,9 @@ const config = {
     ],
   },
 };
+
+if (process.env.BUILD_ENV === 'server') {
+  config.target = 'node';
+}
 
 export default config;
