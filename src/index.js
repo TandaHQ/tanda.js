@@ -6,16 +6,13 @@
 import 'babel-polyfill';
 import fs from 'fs';
 import path from 'path';
+import request from './lib/request';
 
 export default class Tanda {
   constructor(auth = {}) {
     this.auth = auth;
     this.loadEndpoints();
-  }
-
-  request(endpoint, method, data) {
-    // do some kind of authed request
-    console.log(this.auth, data);
+    this.request = request.bind(this);
   }
 
   loadEndpoints() {
@@ -23,9 +20,9 @@ export default class Tanda {
       return fs.readdirSync(path.join(__dirname, 'endpoints'))
         .filter(object => object.slice(-3) === '.js' && object !== 'Endpoint.js')
         .forEach((object) => {
-          console.log(object);
+          const name = object.replace('.js', '');
           const C = require(path.join(__dirname, 'endpoints', object)).default; // eslint-disable-line
-          this[object.slice(0, -3)] = new C(this);
+          this[name.charAt(0).toLowerCase() + name.slice(1)] = new C(this);
         });
     }
     const requireContext = require.context('./endpoints', false, /.*\.js$/);

@@ -17,15 +17,15 @@ export default class Schedules extends Endpoint {
 
   get(id) {
     if (id == null) {
-      return this.request(this.endpoint, 'GET', { ...this.getInclude(), ...this.getShow() });
+      return this.request(this.endpoint, 'GET', { ...this.getInclude(), ...this.getShowCosts() });
     }
 
-    return this.request(`${this.endpoint}/${id}`, 'GET', this.getShow());
+    return this.request(`${this.endpoint}/${id}`, 'GET', this.getShowCosts());
   }
 
   async getByUser(from, to, userIds) {
     // flagged values need to be gotten first so they're definitely reset
-    const flagged = { ...this.getInclude(), ...this.getShow() };
+    const flagged = { ...this.getInclude(), ...this.getShowCosts() };
 
     if (!from || !to) {
       throw new Error('from and to are required');

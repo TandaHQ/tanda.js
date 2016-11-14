@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/deecewan/node-tanda#readme",
   "dependencies": {
+    "babel-polyfill": "^6.16.0",
     "query-string": "^4.1.0"
   },
   "ava": {
@@ -39,7 +40,6 @@
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
-    "babel-polyfill": "^6.16.0",
     "babel-preset-latest": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.18.0",

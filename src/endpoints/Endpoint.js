@@ -20,7 +20,7 @@ export default class Endpoint {
     return this;
   }
 
-  getShow() {
+  getShowCosts() {
     const s = this.show;
     this.show = false;
     return { show_costs: s };

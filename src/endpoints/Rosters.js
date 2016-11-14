@@ -9,10 +9,10 @@ export default class Rosters extends Endpoint {
    * @returns {Promise}
    */
   get(id) {
-    return this.request(`${this.endpoint}/${id}`, 'GET', this.getShow());
+    return this.request(`${this.endpoint}/${id}`, 'GET', this.getShowCosts());
   }
 
   on(date) {
-    return this.request(`${this.endpoint}/on/${date}`, 'GET', this.getShow());
+    return this.request(`${this.endpoint}/on/${date}`, 'GET', this.getShowCosts());
   }
 }

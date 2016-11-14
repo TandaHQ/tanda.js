@@ -1,7 +1,8 @@
-import getDeprecationHandler from '../lib/getDeprecationHandler';
+import Deprecated from '../lib/Deprecated';
 
-export default class Roles {
+export default class Roles extends Deprecated {
   constructor() {
-    return getDeprecationHandler(this, 'Teams (Departments)');
+    super('Teams (Departments)');
+    this.deprecated = true;
   }
 }
