@@ -4,7 +4,10 @@
   "description": "A Node.js wrapper for Tanda's v2 API.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Not Implemented\""
+    "build": "babel src -d out",
+    "lint": "eslint ./src",
+    "pack": "webpack",
+    "test": "ava"
   },
   "repository": {
     "type": "git",
@@ -20,8 +23,31 @@
   },
   "homepage": "https://github.com/deecewan/node-tanda#readme",
   "dependencies": {
-    "bluebird": "^3.3.5",
-    "query-string": "^4.1.0",
-    "request": "^2.72.0"
+    "query-string": "^4.1.0"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "babel": {
+      "babelrc": true
+    }
+  },
+  "devDependencies": {
+    "ava": "^0.16.0",
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.18.2",
+    "babel-eslint": "^7.1.0",
+    "babel-loader": "^6.2.7",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "babel-register": "^6.18.0",
+    "eslint": "^3.9.1",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-react": "^6.6.0",
+    "sinon": "^1.17.6",
+    "webpack": "^1.13.3"
   }
 }
