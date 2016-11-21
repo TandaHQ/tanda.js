@@ -2,13 +2,13 @@
 import path from 'path';
 
 const config = {
-  entry: [
-    'babel-polyfill',
-    './src/index.js',
-  ],
+  entry: {
+    tanda: ['babel-polyfill', './src/index.js'],
+    browser: ['./tools/browser.js'],
+  },
   output: {
     path: path.join(__dirname, 'out'),
-    filename: 'tanda.js',
+    filename: '[name].js',
   },
   devTool: 'inline-source-map',
   resolve: {

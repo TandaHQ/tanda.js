@@ -1,4 +1,8 @@
 # node-tanda
+> Tanda for your JavaScript
+
+Caution: This library is complete (probably), but has not been tested.  If you come across any 
+problems open an issue, or be a champ and bust out a pull request.
 
 ## About
 `node-tanda` is now an isomorphic library, which can be used both in the browser or with node.js.
@@ -34,5 +38,12 @@ tanda.timesheets.showAwardInterpretation.current().then(timesheet => console.log
 
 // etc, etc
 ```
+
+### Isomorphism
+
+This library runs in both the client and the server.  If you're using Webpack or Babel, you can 
+really do whatever.  If you're using older-school Node.js, a standard `var Tanda = require
+('tanda')` should be fine.  For the browser, there is a pre-made package you can use.  If you 
+download the `browser` script, from `./out`, it will expose `window.Tanda` which you can use.
 
 MIT Licence
