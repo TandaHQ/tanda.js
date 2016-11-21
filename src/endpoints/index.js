@@ -8,6 +8,7 @@ import LeaveBalances from './LeaveBalances';
 import Roles from './Roles';
 import Rosters from './Rosters';
 import Schedules from './Schedules';
+import Shifts from './Shifts';
 import Sms from './Sms';
 import Timesheets from './Timesheets';
 
@@ -22,6 +23,7 @@ export default {
   Roles,
   Rosters,
   Schedules,
+  Shifts,
   Sms,
   Timesheets,
 };

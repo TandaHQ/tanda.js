@@ -7,19 +7,6 @@ import Endpoint from './Endpoint';
 
 export default class Timesheets extends Endpoint {
 
-  showAward = false;
-
-  get showAwardInterpretation() {
-    this.showAward = true;
-    return this;
-  }
-
-  getShowAward() {
-    const a = this.showAward;
-    this.showAward = false;
-    return { show_award_interpretation: a };
-  }
-
   getGetParams() {
     return { ...this.getShowAward(), ...this.getShowCosts() };
   }

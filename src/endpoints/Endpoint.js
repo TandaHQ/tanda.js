@@ -25,6 +25,19 @@ export default class Endpoint {
     return { show_costs: s };
   }
 
+  showAward = false;
+
+  get showAwardInterpretation() {
+    this.showAward = true;
+    return this;
+  }
+
+  getShowAward() {
+    const a = this.showAward;
+    this.showAward = false;
+    return { show_award_interpretation: a };
+  }
+
   validateRequest() {
     console.log(this.scopes);
     console.log(this.Tanda.auth);
