@@ -39,8 +39,6 @@ export default class Endpoint {
   }
 
   validateRequest() {
-    console.log(this.scopes);
-    console.log(this.Tanda.auth);
     if (!this.Tanda.auth ||
       (this.Tanda.auth && !this.Tanda.auth.scopes && !this.Tanda.auth.access_token)
     ) {

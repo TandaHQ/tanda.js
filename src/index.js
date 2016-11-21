@@ -14,6 +14,7 @@ export default class Tanda {
 
   constructor(scopes = [], auth = {}) {
     this.scopes = scopes;
+    this.auth = auth;
     this.loadEndpoints();
     this.loadAuthenticators();
     this.request = request.bind(this);
