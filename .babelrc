@@ -1,0 +1,10 @@
+{
+  "presets": [
+    "latest",
+    "stage-0"
+  ],
+  "sourceMaps": "inline",
+  "plugins": [
+    "transform-runtime"
+  ]
+}
