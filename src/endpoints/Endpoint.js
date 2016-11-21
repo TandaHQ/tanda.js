@@ -9,7 +9,7 @@ export default class Endpoint {
    * @returns {string} The endpoint
    */
   get endpoint() {
-    return this.constructor.name.split(/(?=[A-Z])/).map(piece => piece.toLowerCase()).join('_');
+    return this.constructor.name.split(/(?=[A-Z])/).join('_').toLowerCase();
   }
 
   show = false;

@@ -7,7 +7,8 @@
     "build": "babel src -d out",
     "lint": "eslint ./src",
     "pack": "webpack",
-    "test": "ava --tap"
+    "test": "ava",
+    "test:watch": "ava --watch"
   },
   "repository": {
     "type": "git",
