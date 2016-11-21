@@ -6,11 +6,16 @@
 import 'babel-polyfill';
 import request from './lib/request';
 import endpoints from './endpoints';
+import authenticators from './authenticators';
 
 export default class Tanda {
-  constructor(auth = {}) {
-    this.auth = auth;
+
+  api = process.env.API_URL || 'https://my.tanda.co/api';
+
+  constructor(scopes = [], auth = {}) {
+    this.scopes = scopes;
     this.loadEndpoints();
+    this.loadAuthenticators();
     this.request = request.bind(this);
   }
 
@@ -21,6 +26,14 @@ export default class Tanda {
       this[name] = new Value(this);
     });
   }
+
+  loadAuthenticators() {
+    this.authenticators = {};
+    Object.entries(authenticators).forEach(([key, value]) => {
+      this.authenticators[key] = value.bind(this);
+    });
+  }
+
 }
 
 window.Tanda = Tanda;

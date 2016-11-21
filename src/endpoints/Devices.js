@@ -2,6 +2,8 @@ import Endpoint from './Endpoint';
 
 export default class Devices extends Endpoint {
 
+  scopes = ['device'];
+
   /**
    * Get devices, a particular device or all returned devices
    * @param {String|Number} [id] If empty, gets all devices.  If 'returned', gets returned

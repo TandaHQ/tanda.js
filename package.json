@@ -24,6 +24,7 @@
   "homepage": "https://github.com/deecewan/node-tanda#readme",
   "dependencies": {
     "babel-polyfill": "^6.16.0",
+    "isomorphic-fetch": "^2.2.1",
     "query-string": "^4.1.0"
   },
   "ava": {

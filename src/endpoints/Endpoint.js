@@ -1,5 +1,4 @@
 export default class Endpoint {
-  scopes = [];
 
   constructor(parent) {
     this.Tanda = parent;
@@ -26,13 +25,28 @@ export default class Endpoint {
     return { show_costs: s };
   }
 
+  validateRequest() {
+    console.log(this.scopes);
+    console.log(this.Tanda.auth);
+    if (!this.Tanda.auth ||
+      (this.Tanda.auth && !this.Tanda.auth.scopes && !this.Tanda.auth.access_token)
+    ) {
+      throw new Error('Make sure you have authentication before making requests');
+    }
+    const remaining = this.scopes.filter(scope => !this.Tanda.auth.scopes.includes(scope));
+    if (remaining.length > 0) {
+      throw new Error(`Scopes for this call are missing.  Please add ${remaining}`);
+    }
+  }
+
   /**
    * Localised request method
    * @param {String} endpoint The enpoint to post to
    * @param {String} [method=GET] The HTTP method [GET, PUT, POST, DELETE]
    * @param {Array|Object} data The data to send.  For a get request, will be turned into URL params
    */
-  request(endpoint, method = 'GET', data) {
+  async request(endpoint, method = 'GET', data) {
+    this.validateRequest();
     return this.Tanda.request(endpoint, method, data);
   }
 }
