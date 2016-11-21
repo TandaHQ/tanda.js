@@ -1,6 +1,7 @@
 import Endpoint from './Endpoint';
 
 export default class AwardTags extends Endpoint {
+  scopes = [];
     /**
    * Get a list of award tags.
    * @returns {Promise} Resolve: a list of award tags. Reject: {err : 'The error'}

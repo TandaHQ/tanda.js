@@ -7,7 +7,7 @@
     "build": "babel src -d out",
     "lint": "eslint ./src",
     "pack": "webpack",
-    "test": "ava"
+    "test": "ava --tap"
   },
   "repository": {
     "type": "git",
@@ -31,9 +31,7 @@
     "require": [
       "babel-register"
     ],
-    "babel": {
-      "babelrc": true
-    }
+    "babel": "inherit"
   },
   "devDependencies": {
     "ava": "^0.16.0",
