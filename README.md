@@ -1,4 +1,4 @@
-# node-tanda
+# tanda.js
 > Tanda for your JavaScript
 
 Caution: This library is complete (probably), but has not been tested.  If you come across any 
