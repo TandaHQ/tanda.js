@@ -13,9 +13,15 @@
     "test:watch": "ava --watch",
     "prepublish": "yarn run build"
   },
+  "files": [
+    "out",
+    "auth.js",
+    "index.js",
+    "tools"
+  ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deecewan/node-tanda.git"
+    "url": "git+https://github.com/TandaHQ/tanda.js.git"
   },
   "keywords": [
     "tanda"
@@ -23,7 +29,7 @@
   "author": "David Buchan-Swanson <david.buchanswanson@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/deecewan/node-tanda/issues"
+    "url": "https://github.com/TandaHQ/tanda.js/issues"
   },
   "homepage": "https://github.com/deecewan/node-tanda#readme",
   "dependencies": {
