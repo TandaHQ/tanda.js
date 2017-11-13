@@ -25,10 +25,9 @@ export default async function request(endpoint, method, data) {
     Authorization: `bearer ${this.auth.access_token}`,
   });
 
-  return await
-    fetch(`${getBase()}/${url}`, {
-      method,
-      headers,
-      body: JSON.stringify(data), // assuming it's always JSON...
-    });
+  return fetch(`${getBase()}/${url}`, {
+    method,
+    headers,
+    body: JSON.stringify(data), // assuming it's always JSON...
+  });
 }

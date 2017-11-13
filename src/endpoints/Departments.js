@@ -1,7 +1,6 @@
 import Endpoint from './Endpoint';
 
 export default class Departments extends Endpoint {
-
   get(departmentId) {
     if (departmentId == null) {
       return this.request(this.endpoint);
@@ -20,5 +19,4 @@ export default class Departments extends Endpoint {
   remove(departmentId) {
     return this.request(`${this.endpoint}/${departmentId}`, 'DELETE');
   }
-
 }

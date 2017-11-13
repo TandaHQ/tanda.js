@@ -1,4 +1,3 @@
-// import webpack from 'webpack';
 import path from 'path';
 
 const config = {
@@ -10,7 +9,7 @@ const config = {
     path: path.join(__dirname, 'out'),
     filename: '[name].js',
   },
-  devTool: 'inline-source-map',
+  devTool: 'source-map',
   resolve: {
     extensions: ['', '.js'],
   },

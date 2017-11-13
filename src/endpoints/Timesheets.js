@@ -6,7 +6,6 @@
 import Endpoint from './Endpoint';
 
 export default class Timesheets extends Endpoint {
-
   getGetParams() {
     return { ...this.getShowAward(), ...this.getShowCosts() };
   }

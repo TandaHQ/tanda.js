@@ -1,7 +1,6 @@
 import Endpoint from './Endpoint';
 
 export default class Users extends Endpoint {
-
   wages = false;
 
   get showWages() {
@@ -41,5 +40,4 @@ export default class Users extends Endpoint {
   remove(id) {
     return this.request(`${this.endpoint}/${id}`, 'DELETE');
   }
-
 }

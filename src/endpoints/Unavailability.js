@@ -1,7 +1,6 @@
 import Endpoint from './Endpoint';
 
 export default class Unavailability extends Endpoint {
-
   /**
    * Get a request, or multiple requests.
    * If ID is a number, you'll receive a single request.  If it's an array, you'll receive
@@ -13,7 +12,9 @@ export default class Unavailability extends Endpoint {
    * @param {Number|Number[]} userIds The user ids who own the request(s).
    * @returns {Promise<Unavailability|Unavailability[]>}
    */
-  async get({ ids, from, to, userIds}) {
+  async get({
+    ids, from, to, userIds,
+  }) {
     if (typeof ids === 'number' || typeof ids === 'string') {
       // singular request
       return this.request(`${this.endpoint}/${ids}`);
@@ -24,7 +25,9 @@ export default class Unavailability extends Endpoint {
         ' both, if you like.');
     }
 
-    return this.request(this.endpoint, 'GET', { ids, from, to, userIds });
+    return this.request(this.endpoint, 'GET', {
+      ids, from, to, userIds,
+    });
   }
 
   /**
@@ -37,7 +40,9 @@ export default class Unavailability extends Endpoint {
    * @param {String} [repeatingInfo.interval] The interval to repeat on.  e.g. 'day'
    * @param {Number} [repeatingInfo.occurrences] The number of occurrences of the interval
    */
-  create({ userId, title, start, finish, repeatingInfo }) {
+  create({
+    userId, title, start, finish, repeatingInfo,
+  }) {
     let repeating = false;
     if (repeatingInfo instanceof Object) {
       repeating = true;

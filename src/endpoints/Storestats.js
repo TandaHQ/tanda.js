@@ -17,10 +17,12 @@ import Endpoint from './Endpoint';
  */
 export default class Storestats extends Endpoint {
   get(datastreamId, from, to, type = '') {
-    return this.request(`${this.endpoint}/for_datastream/${datastreamId}/from/${from}/to/${to}`,
+    return this.request(
+      `${this.endpoint}/for_datastream/${datastreamId}/from/${from}/to/${to}`,
       'GET', {
         type,
-      });
+      },
+    );
   }
 
   /**
