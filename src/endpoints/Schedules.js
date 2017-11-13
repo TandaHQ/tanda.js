@@ -1,7 +1,6 @@
 import Endpoint from './Endpoint';
 
 export default class Schedules extends Endpoint {
-
   include = false;
 
   get includeNames() {
@@ -31,8 +30,9 @@ export default class Schedules extends Endpoint {
       throw new Error('from and to are required');
     }
 
-    return await this.request(this.endpoint, 'GET', {
-      from, to, user_ids: userIds, ...flagged });
+    return this.request(this.endpoint, 'GET', {
+      from, to, user_ids: userIds, ...flagged,
+    });
   }
 
   create(schedule) {
@@ -46,5 +46,4 @@ export default class Schedules extends Endpoint {
   remove(id) {
     return this.request(`${this.endpoint}/${id}`, 'DELETE');
   }
-
 }

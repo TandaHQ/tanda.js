@@ -1,7 +1,6 @@
 import Endpoint from './Endpoint';
 
 export default class Devices extends Endpoint {
-
   scopes = ['device'];
 
   /**

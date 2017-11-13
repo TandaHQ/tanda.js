@@ -3,13 +3,11 @@
  * @module tanda
  */
 
-import 'babel-polyfill';
 import request from './lib/request';
 import endpoints from './endpoints';
 import authenticators from './authenticators';
 
 export default class Tanda {
-
   api = process.env.API_URL || 'https://my.tanda.co/api';
 
   constructor(scopes = [], auth = {}) {
@@ -34,7 +32,6 @@ export default class Tanda {
       this.authenticators[key] = value.bind(this);
     });
   }
-
 }
 
 window.Tanda = Tanda;

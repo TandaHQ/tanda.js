@@ -18,6 +18,7 @@ export default class Deprecated {
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
   toString() {
     return 'Deprecated Endpoint';
   }

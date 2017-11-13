@@ -1,10 +1,10 @@
 {
   "presets": [
-    "latest",
-    "stage-0"
+    "env"
   ],
-  "sourceMaps": "inline",
   "plugins": [
-    "transform-runtime"
+    "transform-runtime",
+    "transform-class-properties",
+    "transform-object-rest-spread"
   ]
 }

@@ -1,7 +1,6 @@
 import Endpoint from './Endpoint';
 
 export default class Rosters extends Endpoint {
-
   /**
    *
    * @param {String|Number} id Set to current to get the current roster, or a rosterId to get

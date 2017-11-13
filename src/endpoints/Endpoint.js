@@ -1,5 +1,4 @@
 export default class Endpoint {
-
   constructor(parent) {
     this.Tanda = parent;
   }

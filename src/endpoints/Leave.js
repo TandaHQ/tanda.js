@@ -11,7 +11,9 @@ export default class Leave extends Endpoint {
       throw new Error('You must specify either from and to, or ids of the requests');
     }
 
-    return this.request(this.endpoint, 'GET', { from, to, user_ids: users, ids: id });
+    return this.request(this.endpoint, 'GET', {
+      from, to, user_ids: users, ids: id,
+    });
   }
 
   create(leave) {

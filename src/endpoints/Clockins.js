@@ -1,11 +1,10 @@
 import Endpoint from './Endpoint';
 
 export default class Clockins extends Endpoint {
-
   async get(from, to, userId = '', deviceId = '') {
     if (typeof from === 'number') {
       // getting a specific clockin
-      return await this.require(`${this.endpoint}/${from}`);
+      return this.require(`${this.endpoint}/${from}`);
     }
 
     if (userId === '' && deviceId === '') {
@@ -16,7 +15,7 @@ export default class Clockins extends Endpoint {
       throw new Error('From and To must be set.');
     }
 
-    return await this.request(this.endpoint, 'GET', {
+    return this.request(this.endpoint, 'GET', {
       from,
       to,
       user_id: userId,
@@ -24,7 +23,9 @@ export default class Clockins extends Endpoint {
     });
   }
 
-  async create({ userId, type, time = Date.now(), deviceId, tag, photo, departmentId }) {
+  async create({
+    userId, type, time = Date.now(), deviceId, tag, photo, departmentId,
+  }) {
     const allowedTypes = ['clockin', 'clockout'];
     if (!allowedTypes.includes(type)) {
       throw new Error(`Type must be one of ${allowedTypes}`);
@@ -34,7 +35,7 @@ export default class Clockins extends Endpoint {
       return new Error('userId must be set');
     }
 
-    return await this.request(this.endpoint, 'POST', {
+    return this.request(this.endpoint, 'POST', {
       type,
       time,
       tag,
